@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+<g stroke="#3b2618" stroke-width="6" stroke-linejoin="round" stroke-linecap="round">
+<line x1="100" y1="34" x2="100" y2="62"/>
+<path d="M100 18 C92 26 94 34 100 34 C106 34 108 26 100 18 Z" fill="#f6c453" stroke-width="4"/>
+<rect x="40" y="62" width="120" height="46" rx="10" fill="#fffaf0"/>
+<rect x="28" y="104" width="144" height="62" rx="12" fill="#f2b8c6"/>
+<rect x="18" y="160" width="164" height="16" rx="8" fill="#e8c38a"/>
+</g>
+<path d="M40 84 q10 12 20 0 q10 12 20 0 q10 12 20 0 q10 12 20 0 q10 12 20 0 q10 12 20 0" fill="none" stroke="#d9879d" stroke-width="4" stroke-linecap="round"/>
+<g fill="#3b2618"><ellipse cx="80" cy="134" rx="9" ry="7"/><circle cx="70" cy="122" r="3.5"/><circle cx="78" cy="118" r="3.5"/><circle cx="87" cy="120" r="3.5"/><circle cx="91" cy="128" r="3.5"/></g>
+<g fill="#3b2618"><ellipse cx="124" cy="140" rx="9" ry="7"/><circle cx="114" cy="128" r="3.5"/><circle cx="122" cy="124" r="3.5"/><circle cx="131" cy="126" r="3.5"/><circle cx="135" cy="134" r="3.5"/></g>
+</svg>
