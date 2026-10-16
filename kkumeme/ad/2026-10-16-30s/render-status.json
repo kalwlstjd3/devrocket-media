@@ -1,0 +1,9 @@
+{
+  "status": "not-rendered",
+  "reason": "Playwright Chromium executable is missing",
+  "target": {"width": 1080, "height": 1920, "fps": 30, "duration": 30, "frames": 900, "audio": false},
+  "mp4Produced": false,
+  "boardProduced": false,
+  "visualReview": "not-performed",
+  "source15s": "b07ed7a0e5e87c09466fd94efd20b615a80e18e0"
+}
