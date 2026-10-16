@@ -28,12 +28,13 @@ h1{font-family:var(--display);font-weight:400;font-size:24px;margin:0;color:var(
 .steps button[aria-current="step"]{border-color:var(--brand);color:var(--brand);font-weight:700}
 .stage{position:relative;border-radius:18px;overflow:hidden;background:#111;aspect-ratio:3/4;max-width:100%;touch-action:none;user-select:none}
 .stage video,.stage canvas.view{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+#editStage{background:transparent;overflow:visible;aspect-ratio:3/4.4}
 .mask{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
 .hint{position:absolute;left:0;right:0;top:12px;text-align:center;color:#fff;font-size:13px;text-shadow:0 1px 3px rgba(0,0,0,.6)}
-.shutter-row{display:flex;align-items:center;justify-content:center;gap:18px}
+.shutter-row{display:flex;align-items:center;justify-content:center;gap:18px;padding-top:6px}
 .btn{font:inherit;font-weight:600;border:0;border-radius:14px;padding:12px 16px;cursor:pointer;background:var(--surface);color:var(--ink);box-shadow:0 0 0 1.5px var(--line) inset}
 .btn.primary{background:var(--brand);color:var(--brand-ink);box-shadow:none}
-.shutter{width:68px;height:68px;border-radius:50%;border:5px solid var(--surface);background:var(--sun);box-shadow:0 0 0 2px var(--brand);cursor:pointer}
+.shutter{appearance:none;flex:none;box-sizing:border-box;width:68px;height:68px;border-radius:50%;border:3px solid var(--brand);background:var(--sun);background-clip:content-box;padding:4px;cursor:pointer}
 .btn:focus-visible,.shutter:focus-visible,.steps button:focus-visible,.chip:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
 .note{font-size:12.5px;color:var(--muted);line-height:1.55;margin:0}
 .panel{background:var(--surface);border-radius:18px;padding:14px;display:flex;flex-direction:column;gap:12px;box-shadow:0 0 0 1.5px var(--line) inset}
@@ -46,8 +47,6 @@ h1{font-family:var(--display);font-weight:400;font-size:24px;margin:0;color:var(
 .swatch[aria-pressed="true"]{box-shadow:0 0 0 2px var(--surface),0 0 0 4px var(--brand)}
 input[type=text]{font:inherit;width:100%;min-width:0;padding:8px 10px;border-radius:10px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink)}
 input[type=range]{width:100%;accent-color:var(--brand)}
-.stampbox{display:grid;place-items:center;padding:22px 10px;border-radius:18px;background:repeating-linear-gradient(0deg,transparent 0 23px,rgba(73,49,101,.07) 23px 24px),var(--surface);box-shadow:0 0 0 1.5px var(--line) inset;touch-action:none}
-.stampbox canvas{max-width:56%;max-height:46vh;width:auto;height:auto;filter:drop-shadow(0 3px 6px rgba(0,0,0,.22));cursor:grab}
 .meta{font-size:12px;color:var(--muted);text-align:center;font-variant-numeric:tabular-nums}
 .page{position:relative;border-radius:18px;aspect-ratio:480/700;max-width:100%;overflow:hidden;background:#fdf6e9;box-shadow:0 0 0 1.5px var(--line) inset}
 .page .bgdots{position:absolute;inset:0;background-image:radial-gradient(#e8d9c2 1.4px,transparent 1.5px);background-size:22px 22px}
@@ -78,24 +77,25 @@ input[type=range]{width:100%;accent-color:var(--brand)}
       <video id="video" playsinline muted hidden></video>
       <canvas class="view" id="still"></canvas>
       <canvas class="mask" id="mask"></canvas>
-      <div class="hint" id="vfHint">끌어서 위치, 두 손가락으로 크기</div>
+      <div class="hint" id="vfHint">사진을 끌어서 맞추기 · 두 손가락으로 크기</div>
     </div>
     <div class="shutter-row">
       <button class="btn" id="pickAlbum">앨범</button>
       <button class="shutter" id="shutter" aria-label="찍기"></button>
       <button class="btn" id="camToggle">카메라 켜기</button>
     </div>
-    <p class="note" id="camNote">우표 틀 안에 들어온 부분만 우표가 돼요. 지금은 예시 사진이 들어 있어요.</p>
+    <p class="note" id="camNote">점선 안이 오려져 우표가 돼요. 사진을 끌어서 맞추고 가운데 버튼. 지금은 예시 사진이 들어 있어요.</p>
     <input class="hidden-input" type="file" id="fileAlbum" accept="image/*">
     <input class="hidden-input" type="file" id="fileCam" accept="image/*" capture="environment">
   </section>
 
   <!-- 2. 꾸미기 -->
   <section id="step-edit" class="step" aria-label="꾸미기" hidden>
-    <div class="stampbox"><canvas id="stamp" aria-label="만든 우표"></canvas></div>
+    <div class="stage" id="editStage"><canvas class="view" id="editView" aria-label="사진에서 오려낸 우표"></canvas></div>
     <p class="meta" id="meta"></p>
     <div class="panel">
       <div class="row"><span>모양</span><div class="chips" id="optShape"></div></div>
+      <div class="row"><span>테두리</span><div class="chips" id="optMargin"></div></div>
       <div class="row"><span>톱니</span><div class="chips" id="optTeeth"></div></div>
       <div class="row"><span>종이</span><div class="chips" id="optPaper"></div></div>
       <div class="row"><span>색감</span><div class="chips" id="optTone"></div></div>
@@ -121,26 +121,28 @@ input[type=range]{width:100%;accent-color:var(--brand)}
   </section>
 </div>
 
+
 <script>
 (() => {
   const $ = (id) => document.getElementById(id);
   const S = {
-    shape: "portrait", teeth: "mid", paper: "#fffdf7", tone: "vintage",
+    shape: "portrait", margin: "none", teeth: "small", paper: "#fffdf7", tone: "vintage",
     caption: "", font: "hand", mark: false,
     img: null, panX: 0, panY: 0, zoom: 1, stream: null, made: 0,
   };
   const SHAPES = { portrait: [3, 4, "세로"], landscape: [4, 3, "가로"], square: [1, 1, "정사각"] };
-  const TEETH = { small: [0.018, "잘게"], mid: [0.028, "보통"], big: [0.042, "크게"] };
+  const MARGINS = { none: [0, "사진 끝까지"], thin: [0.045, "얇게"], wide: [0.09, "넓게"] };
+  const TEETH = { small: [0.015, "잘게"], mid: [0.028, "보통"], big: [0.042, "크게"] };
   const PAPERS = [["#fffdf7", "흰 종이"], ["#f6ead2", "크림"], ["#dcebf5", "하늘"], ["#f7dde3", "분홍"], ["#dcefe3", "민트"]];
   const TONES = { none: "원본", vintage: "빈티지", film: "필름" };
   const FONTS = { hand: ["개구체", '700 1em "Gaegu"'], bold: ["검은고딕", '400 1em "Black Han Sans"'] };
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  const mk = (w, h) => { const c = document.createElement("canvas"); c.width = Math.max(1, Math.round(w)); c.height = Math.max(1, Math.round(h)); return c; };
   const today = () => { const d = new Date(); return `${String(d.getDate()).padStart(2, "0")}.${String(d.getMonth() + 1).padStart(2, "0")} · ${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`; };
-  S.caption = today();
 
   // ---------- sample photo (drawn, so the page opens in a working state) ----------
   function samplePhoto() {
-    const c = document.createElement("canvas"); c.width = 900; c.height = 1200;
-    const g = c.getContext("2d");
+    const c = mk(900, 1200), g = c.getContext("2d");
     const sky = g.createLinearGradient(0, 0, 0, 1200);
     sky.addColorStop(0, "#9cc9e8"); sky.addColorStop(.55, "#f7d9b8"); sky.addColorStop(1, "#e9b48f");
     g.fillStyle = sky; g.fillRect(0, 0, 900, 1200);
@@ -155,63 +157,80 @@ input[type=range]{width:100%;accent-color:var(--brand)}
     return c;
   }
 
-  // ---------- geometry ----------
+  // linen card paper (also what shows through the hole)
+  const PAPERTEX = (() => {
+    const N = 320, c = mk(N, N), g = c.getContext("2d");
+    g.fillStyle = "#e9e5dd"; g.fillRect(0, 0, N, N);
+    for (let k = 0; k < 18; k++) { const x = Math.random() * N, y = Math.random() * N, r = 30 + Math.random() * 70;
+      const rg = g.createRadialGradient(x, y, 0, x, y, r); rg.addColorStop(0, Math.random() < .5 ? "rgba(255,255,255,.09)" : "rgba(90,80,70,.025)"); rg.addColorStop(1, "rgba(0,0,0,0)");
+      g.fillStyle = rg; for (const ox of [-N, 0, N]) for (const oy of [-N, 0, N]) { g.save(); g.translate(ox, oy); g.fillRect(-ox, -oy, N, N); g.restore(); } }
+    g.fillStyle = "rgba(80,70,60,.05)"; for (let i = 0; i < N; i += 3) { g.fillRect(0, i, N, 1); g.fillRect(i, 0, 1, N); }
+    const d = g.getImageData(0, 0, N, N), p = d.data;
+    for (let i = 0; i < p.length; i += 4) { const n = (Math.random() - .5) * 20; p[i] += n; p[i + 1] += n; p[i + 2] += n; }
+    g.putImageData(d, 0, 0); return c;
+  })();
+
+  // ---------- geometry: one photo transform shared by every stage ----------
   function stampSize(base) {
-    const [w, h] = SHAPES[S.shape];
-    const k = base / Math.max(w, h);
+    const [w, h] = SHAPES[S.shape]; const k = base / Math.max(w, h);
     return { W: Math.round(w * k), H: Math.round(h * k) };
   }
-  // photo window inside the stamp (relative to stamp size)
-  function windowRect(W, H) {
-    const t = TEETH[S.teeth][0] * Math.max(W, H);
-    const m = t * 2.2 + Math.min(W, H) * 0.035;
-    const cap = S.caption.trim() ? Math.min(W, H) * 0.13 : 0;
-    return { x: m, y: m, w: W - m * 2, h: H - m * 2 - cap, cap, m, t };
+  // photo cover-fitted to a w×h stage; pan is a fraction of the stage so all stages agree
+  function cover(w, h, img) {
+    const iw = img.videoWidth || img.width, ih = img.videoHeight || img.height;
+    const s = Math.max(w / iw, h / ih) * S.zoom, dw = iw * s, dh = ih * s;
+    const mx = (dw - w) / 2 / w, my = (dh - h) / 2 / h;
+    S.panX = clamp(S.panX, -mx, mx); S.panY = clamp(S.panY, -my, my);
+    return { x: (w - dw) / 2 + S.panX * w, y: (h - dh) / 2 + S.panY * h, w: dw, h: dh, s };
+  }
+  function frameRect(w, h) {
+    const [sw, sh] = SHAPES[S.shape]; const k = Math.min(w * .56 / sw, h * .5 / sh);
+    const fw = sw * k, fh = sh * k; return { x: (w - fw) / 2, y: (h - fh) / 2 - h * .02, w: fw, h: fh };
+  }
+  // the photo region under the frame, in source pixels (reference stage 300×400)
+  function crop() {
+    const c = cover(300, 400, S.img), f = frameRect(300, 400);
+    return { sx: (f.x - c.x) / c.s, sy: (f.y - c.y) / c.s, sw: f.w / c.s, sh: f.h / c.s };
   }
 
-  // draw the user's photo into a rect with pan/zoom (cover fit)
-  function drawPhoto(g, r, img) {
-    if (!img) return;
-    const iw = img.videoWidth || img.width, ih = img.videoHeight || img.height;
-    const s = Math.max(r.w / iw, r.h / ih) * S.zoom;
-    const dw = iw * s, dh = ih * s;
-    const maxX = (dw - r.w) / 2, maxY = (dh - r.h) / 2;
-    S.panX = Math.max(-maxX, Math.min(maxX, S.panX)); S.panY = Math.max(-maxY, Math.min(maxY, S.panY));
-    g.drawImage(img, r.x + (r.w - dw) / 2 + S.panX * (r.w / 300), r.y + (r.h - dh) / 2 + S.panY * (r.h / 400), dw, dh);
+  // perforated outline: rectangle minus half-circles along every edge
+  // hole centres along every edge (corners included)
+  function holes(W, H, t) {
+    const out = [], step = t * 2.6;
+    const edge = (len, f) => { const n = Math.max(2, Math.round(len / step)); for (let i = 0; i <= n; i++) f(i * len / n); };
+    edge(W, (x) => { out.push([x, 0], [x, H]); }); edge(H, (y) => { out.push([0, y], [W, y]); });
+    return out;
+  }
+  // perforated outline: rectangle minus circles centred on the edges
+  function perforate(g, W, H, t) {
+    g.save(); g.globalCompositeOperation = "destination-out"; g.beginPath();
+    for (const [x, y] of holes(W, H, t)) { g.moveTo(x + t, y); g.arc(x, y, t, 0, Math.PI * 2); }
+    g.fill(); g.restore();
+  }
+  const teeth = (W, H) => TEETH[S.teeth][0] * Math.max(W, H);
+  // solid stamp silhouette at a given size (same rule as the stamp itself)
+  function shapeCanvas(W, H) {
+    const c = mk(W, H), g = c.getContext("2d"); g.fillStyle = "#000"; g.fillRect(0, 0, c.width, c.height);
+    perforate(g, c.width, c.height, teeth(c.width, c.height)); return c;
   }
 
   function applyTone(g, r) {
-    if (S.tone === "none") return;
+    if (S.tone === "none" || r.w < 1 || r.h < 1) return;
     const d = g.getImageData(r.x | 0, r.y | 0, Math.ceil(r.w), Math.ceil(r.h)), p = d.data;
     for (let i = 0; i < p.length; i += 4) {
       let R = p[i], G = p[i + 1], B = p[i + 2];
       if (S.tone === "vintage") { const L = .3 * R + .59 * G + .11 * B;
         R = R * .72 + L * .28 + 14; G = G * .72 + L * .28 + 6; B = B * .72 + L * .28 - 10; }
       else { R = R * 1.05 + 4; G = G * .98 + 6; B = B * .9 + 18; }
-      const n = (Math.random() - .5) * 18;
-      p[i] = R + n; p[i + 1] = G + n; p[i + 2] = B + n;
+      const n = (Math.random() - .5) * 18; p[i] = R + n; p[i + 1] = G + n; p[i + 2] = B + n;
     }
     g.putImageData(d, r.x | 0, r.y | 0);
   }
-
-  // perforated outline: rectangle minus half-circles along every edge
-  function perforate(g, W, H, t) {
-    g.save(); g.globalCompositeOperation = "destination-out";
-    const step = t * 2.6;
-    const edge = (len, f) => { const n = Math.max(2, Math.round(len / step)); const gap = len / n;
-      for (let i = 0; i <= n; i++) f(i * gap); };
-    g.beginPath();
-    edge(W, (x) => { g.moveTo(x + t, 0); g.arc(x, 0, t, 0, Math.PI * 2); g.moveTo(x + t, H); g.arc(x, H, t, 0, Math.PI * 2); });
-    edge(H, (y) => { g.moveTo(t, y); g.arc(0, y, t, 0, Math.PI * 2); g.moveTo(W + t, y); g.arc(W, y, t, 0, Math.PI * 2); });
-    g.fill(); g.restore();
-  }
-
   function paperGrain(g, W, H) {
     const d = g.getImageData(0, 0, W, H), p = d.data;
-    for (let i = 0; i < p.length; i += 4) { if (!p[i + 3]) continue; const n = (Math.random() - .5) * 10; p[i] += n; p[i + 1] += n; p[i + 2] += n; }
+    for (let i = 0; i < p.length; i += 4) { const n = (Math.random() - .5) * 10; p[i] += n; p[i + 1] += n; p[i + 2] += n; }
     g.putImageData(d, 0, 0);
   }
-
   function postmark(g, W, H) {
     const R = Math.min(W, H) * .2, cx = W - R * .9, cy = R * 1.05;
     g.save(); g.strokeStyle = "rgba(48,40,70,.62)"; g.fillStyle = "rgba(48,40,70,.62)"; g.lineWidth = Math.max(2, R * .06);
@@ -223,70 +242,69 @@ input[type=range]{width:100%;accent-color:var(--brand)}
     [...word].forEach((ch, i) => { const a = -Math.PI * .85 + i * (Math.PI * .7 / (word.length - 1));
       g.save(); g.translate(cx + Math.cos(a) * R * .86, cy + Math.sin(a) * R * .86); g.rotate(a + Math.PI / 2); g.fillText(ch, 0, 0); g.restore(); });
     for (let k = 0; k < 4; k++) { g.beginPath(); const y = cy + (k - 1.5) * R * .22;
-      g.moveTo(cx - R * 1.15 - R * 1.6, y); g.bezierCurveTo(cx - R * 2.2, y - R * .12, cx - R * 1.6, y + R * .12, cx - R * 1.05, y); g.stroke(); }
+      g.moveTo(cx - R * 2.75, y); g.bezierCurveTo(cx - R * 2.2, y - R * .12, cx - R * 1.6, y + R * .12, cx - R * 1.05, y); g.stroke(); }
     g.restore();
   }
 
+  // the stamp = exactly the photo region inside the frame, with a thin paper lip at the teeth
   function renderStamp(canvas, base) {
     const { W, H } = stampSize(base);
     canvas.width = W; canvas.height = H;
     const g = canvas.getContext("2d", { willReadFrequently: true });
-    g.clearRect(0, 0, W, H);
+    const t = teeth(W, H), lip = t * .45, mg = MARGINS[S.margin][0] * Math.min(W, H) + lip;
+    const cap = S.caption.trim(), band = cap && S.margin !== "none" ? Math.min(W, H) * .13 : 0;
     g.fillStyle = S.paper; g.fillRect(0, 0, W, H);
-    const r = windowRect(W, H);
-    g.save(); g.beginPath(); g.rect(r.x, r.y, r.w, r.h); g.clip(); drawPhoto(g, r, S.img); g.restore();
-    applyTone(g, r);
-    g.strokeStyle = "rgba(0,0,0,.18)"; g.lineWidth = 1; g.strokeRect(r.x + .5, r.y + .5, r.w - 1, r.h - 1);
-    if (r.cap) {
+    const pr = { x: mg, y: mg, w: W - mg * 2, h: H - mg * 2 - band };
+    if (S.img) { const k = crop(); g.save(); g.beginPath(); g.rect(pr.x, pr.y, pr.w, pr.h); g.clip();
+      g.drawImage(S.img, k.sx, k.sy, k.sw, k.sh, 0, 0, W, H); g.restore(); }
+    applyTone(g, pr);
+    if (S.margin !== "none") { g.strokeStyle = "rgba(0,0,0,.16)"; g.lineWidth = 1; g.strokeRect(pr.x + .5, pr.y + .5, pr.w - 1, pr.h - 1); }
+    if (cap) {
       const [, font] = FONTS[S.font];
-      g.fillStyle = "#3b2618"; g.textAlign = "center"; g.textBaseline = "middle";
-      g.font = font.replace("1em", `${Math.round(r.cap * (S.font === "hand" ? .78 : .6))}px`);
-      g.fillText(S.caption.trim(), W / 2, r.y + r.h + r.cap * .55, r.w);
+      if (band) { g.fillStyle = "#3b2618"; g.textAlign = "center"; g.textBaseline = "middle";
+        g.font = font.replace("1em", `${Math.round(band * (S.font === "hand" ? .78 : .6))}px`);
+        g.fillText(cap, W / 2, pr.y + pr.h + band * .55, pr.w); }
+      else { const fs = Math.round(Math.min(W, H) * (S.font === "hand" ? .085 : .065));
+        g.save(); g.font = font.replace("1em", `${fs}px`); g.textAlign = "left"; g.textBaseline = "alphabetic";
+        g.shadowColor = "rgba(0,0,0,.45)"; g.shadowBlur = fs * .25; g.fillStyle = "#fffaf0";
+        g.fillText(cap, pr.x + fs * .5, pr.y + pr.h - fs * .55, pr.w - fs); g.restore(); }
     }
     if (S.mark) postmark(g, W, H);
     paperGrain(g, W, H);
-    perforate(g, W, H, r.t);
+    perforate(g, W, H, t);
     return { W, H };
   }
 
-  // ---------- step 1: viewfinder ----------
+  // ---------- step 1: viewfinder (whole photo, dashed cut line, outside dimmed) ----------
   const still = $("still"), mask = $("mask"), video = $("video"), vf = $("viewfinder");
-  function sizeCanvas(c) { const b = vf.getBoundingClientRect(), d = devicePixelRatio || 1;
-    c.width = Math.round(b.width * d); c.height = Math.round(b.height * d); return { w: c.width, h: c.height, d }; }
-  function frameRect(w, h) { // stamp window shown over the live view
-    const [sw, sh] = SHAPES[S.shape]; const k = Math.min(w * .56 / sw, h * .5 / sh);
-    const fw = sw * k, fh = sh * k; return { x: (w - fw) / 2, y: (h - fh) / 2 - h * .02, w: fw, h: fh };
+  function sizeTo(c, host) { const b = host.getBoundingClientRect(), d = devicePixelRatio || 1;
+    c.width = Math.max(1, Math.round(b.width * d)); c.height = Math.max(1, Math.round(b.height * d)); return { w: c.width, h: c.height, d }; }
+  function paintPhoto(g, w, h, src) {
+    g.fillStyle = "#222"; g.fillRect(0, 0, w, h);
+    if (!src) return; const c = cover(w, h, src); g.drawImage(src, c.x, c.y, c.w, c.h);
   }
   function drawViewfinder() {
-    const { w, h, d } = sizeCanvas(still); sizeCanvas(mask);
-    const g = still.getContext("2d");
-    g.fillStyle = "#222"; g.fillRect(0, 0, w, h);
-    const fr = frameRect(w, h);
-    const src = S.stream ? video : S.img;
-    if (!S.stream) { g.save(); drawPhoto(g, { x: fr.x, y: fr.y, w: fr.w, h: fr.h }, src);
-      g.restore(); g.save(); g.globalAlpha = .35; g.filter = "blur(6px)"; drawPhoto(g, { x: 0, y: 0, w, h }, src); g.restore();
-      g.save(); g.beginPath(); g.rect(fr.x, fr.y, fr.w, fr.h); g.clip(); drawPhoto(g, fr, src); g.restore(); }
+    const { w, h, d } = sizeTo(still, vf); sizeTo(mask, vf);
+    paintPhoto(still.getContext("2d"), w, h, S.stream ? video : S.img);
+    const fr = frameRect(w, h), shp = shapeCanvas(fr.w, fr.h);
     const m = mask.getContext("2d"); m.clearRect(0, 0, w, h);
-    m.fillStyle = getComputedStyle(document.documentElement).getPropertyValue("--shade") || "rgba(0,0,0,.5)";
-    m.fillRect(0, 0, w, h);
-    // punch a perforated window
-    const t = Math.max(w, h) * TEETH[S.teeth][0] * .55, pad = t * 2.2;
-    const o = { x: fr.x - pad, y: fr.y - pad, w: fr.w + pad * 2, h: fr.h + pad * 2 };
-    m.globalCompositeOperation = "destination-out"; m.fillRect(o.x, o.y, o.w, o.h);
-    m.globalCompositeOperation = "source-over"; m.save(); m.translate(o.x, o.y);
-    m.fillStyle = "rgba(255,255,255,.92)"; m.beginPath(); m.rect(0, 0, o.w, o.h); m.rect(pad, pad, fr.w, fr.h); m.fill("evenodd");
-    m.globalCompositeOperation = "destination-out"; m.beginPath();
-    const step = t * 2.6, dots = (len, f) => { const n = Math.max(2, Math.round(len / step)); for (let i = 0; i <= n; i++) f(i * len / n); };
-    dots(o.w, (x) => { m.moveTo(x + t, 0); m.arc(x, 0, t, 0, 7); m.moveTo(x + t, o.h); m.arc(x, o.h, t, 0, 7); });
-    dots(o.h, (y) => { m.moveTo(t, y); m.arc(0, y, t, 0, 7); m.moveTo(o.w + t, y); m.arc(o.w, y, t, 0, 7); });
-    m.fill(); m.restore(); m.globalCompositeOperation = "source-over";
+    m.fillStyle = "rgba(20,14,26,.5)"; m.fillRect(0, 0, w, h);
+    m.globalCompositeOperation = "destination-out"; m.drawImage(shp, fr.x, fr.y); m.globalCompositeOperation = "source-over";
+    // cut line: an even stroke just inside the perforated edge (vector, so every tooth is identical)
+    const L = 1.5 * d, t = teeth(fr.w, fr.h), hs = holes(fr.w, fr.h, t);
+    const ring = mk(w, h), r = ring.getContext("2d");
+    r.translate(fr.x, fr.y); r.strokeStyle = "#fff"; r.lineWidth = L * 2;
+    r.save(); r.beginPath(); r.rect(0, 0, fr.w, fr.h); r.clip();
+    r.strokeRect(0, 0, fr.w, fr.h);
+    r.beginPath(); for (const [x, y] of hs) { r.moveTo(x + t, y); r.arc(x, y, t, 0, Math.PI * 2); } r.stroke(); r.restore();
+    r.globalCompositeOperation = "destination-out"; r.beginPath();
+    for (const [x, y] of hs) { r.moveTo(x + t, y); r.arc(x, y, t, 0, Math.PI * 2); } r.fill();
+    m.drawImage(ring, 0, 0);
     if (S.stream) requestAnimationFrame(drawLive);
   }
   function drawLive() {
     if (!S.stream) return;
-    const w = still.width, h = still.height, g = still.getContext("2d");
-    const fr = frameRect(w, h); const vw = video.videoWidth, vh = video.videoHeight;
-    if (vw) { const s = Math.max(w / vw, h / vh); g.drawImage(video, (w - vw * s) / 2, (h - vh * s) / 2, vw * s, vh * s); }
+    paintPhoto(still.getContext("2d"), still.width, still.height, video);
     requestAnimationFrame(drawLive);
   }
 
@@ -296,62 +314,119 @@ input[type=range]{width:100%;accent-color:var(--brand)}
     try {
       if (!navigator.mediaDevices?.getUserMedia) throw new Error("no api");
       S.stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment", width: { ideal: 1920 } }, audio: false });
-      video.srcObject = S.stream; await video.play(); video.hidden = true;
-      $("camToggle").textContent = "카메라 끄기"; $("vfHint").textContent = "틀 안에 맞추고 가운데 버튼";
-      note.textContent = "실제 카메라 화면이에요. 틀 밖은 우표에 들어가지 않아요.";
+      video.srcObject = S.stream; await video.play(); S.panX = S.panY = 0; S.zoom = 1;
+      $("camToggle").textContent = "카메라 끄기"; $("vfHint").textContent = "점선 안에 맞추고 가운데 버튼";
+      note.textContent = "실제 카메라 화면이에요. 점선 안이 오려져 우표가 돼요.";
       drawViewfinder();
     } catch {
       S.stream = null;
-      note.textContent = "이 미리보기 창에서는 카메라를 바로 켤 수 없어요. 대신 휴대폰 카메라 앱으로 찍어서 가져올게요. 실제 꾸밈에서는 이 화면에 카메라가 나오고 우표 틀이 겹쳐 보여요.";
+      note.textContent = "이 미리보기 창에서는 카메라를 바로 켤 수 없어요. 대신 휴대폰 카메라 앱으로 찍어서 가져올게요. 실제 꾸밈에서는 이 화면에 카메라가 나오고 점선이 겹쳐 보여요.";
       $("fileCam").click();
     }
   }
   function stopCamera() { S.stream?.getTracks().forEach((t) => t.stop()); S.stream = null; video.srcObject = null;
-    $("camToggle").textContent = "카메라 켜기"; $("vfHint").textContent = "끌어서 위치, 두 손가락으로 크기"; drawViewfinder(); }
+    $("camToggle").textContent = "카메라 켜기"; $("vfHint").textContent = "사진을 끌어서 맞추기 · 두 손가락으로 크기"; drawViewfinder(); }
 
   function shoot() {
-    if (S.stream) { // freeze current frame
-      const c = document.createElement("canvas"); c.width = video.videoWidth; c.height = video.videoHeight;
-      c.getContext("2d").drawImage(video, 0, 0); S.img = c; S.panX = S.panY = 0; S.zoom = 1; stopCamera();
-    }
-    go("edit");
+    if (S.stream) { const c = mk(video.videoWidth, video.videoHeight); c.getContext("2d").drawImage(video, 0, 0);
+      S.img = c; S.panX = S.panY = 0; S.zoom = 1; stopCamera(); }
+    go("edit", true);
   }
-
   function loadFile(file) {
     if (!file) return;
-    const url = URL.createObjectURL(file), im = new Image();
+    const im = new Image();
     im.onload = () => { S.img = im; S.panX = S.panY = 0; S.zoom = 1; drawViewfinder();
-      $("camNote").textContent = "틀 안을 끌어서 맞춘 뒤 가운데 버튼을 눌러요."; };
-    im.src = url;
+      $("camNote").textContent = "사진을 끌어서 점선 안에 맞춘 뒤 가운데 버튼을 눌러요."; };
+    im.src = URL.createObjectURL(file);
   }
-
-  // pan & pinch on the viewfinder and on the stamp preview
-  function attachGestures(el, redraw, scale) {
+  function attachGestures(el, redraw) {
     const pts = new Map(); let last = null;
     el.addEventListener("pointerdown", (e) => { el.setPointerCapture(e.pointerId); pts.set(e.pointerId, [e.clientX, e.clientY]); });
     el.addEventListener("pointermove", (e) => {
       if (!pts.has(e.pointerId) || S.stream) return;
       const prev = pts.get(e.pointerId); pts.set(e.pointerId, [e.clientX, e.clientY]);
-      if (pts.size === 1) { S.panX += (e.clientX - prev[0]) * scale(); S.panY += (e.clientY - prev[1]) * scale(); }
+      if (pts.size === 1) { S.panX += (e.clientX - prev[0]) / el.clientWidth; S.panY += (e.clientY - prev[1]) / el.clientHeight; }
       else { const [a, b] = [...pts.values()]; const dist = Math.hypot(a[0] - b[0], a[1] - b[1]);
-        if (last) S.zoom = Math.max(1, Math.min(4, S.zoom * dist / last)); last = dist; }
+        if (last) S.zoom = clamp(S.zoom * dist / last, 1, 4); last = dist; }
       redraw();
     });
     const end = (e) => { pts.delete(e.pointerId); if (pts.size < 2) last = null; };
     el.addEventListener("pointerup", end); el.addEventListener("pointercancel", end);
-    el.addEventListener("wheel", (e) => { e.preventDefault(); S.zoom = Math.max(1, Math.min(4, S.zoom * (e.deltaY < 0 ? 1.08 : .93))); redraw(); }, { passive: false });
+    el.addEventListener("wheel", (e) => { e.preventDefault(); S.zoom = clamp(S.zoom * (e.deltaY < 0 ? 1.08 : .93), 1, 4); redraw(); }, { passive: false });
   }
 
-  // ---------- step 2: edit ----------
-  const stampCanvas = $("stamp");
-  let pendingDraw = 0;
-  function drawStamp() {
-    cancelAnimationFrame(pendingDraw);
-    pendingDraw = requestAnimationFrame(() => {
-      const { W, H } = renderStamp(stampCanvas, 720);
-      stampCanvas.toBlob((b) => { $("meta").textContent = `투명 PNG ${W}×${H} · 약 ${Math.round((b?.size || 0) / 1024)}KB · 화면에서 끌어서 위치 조정`; }, "image/png");
-    });
+  // ---------- step 2: a paper card — the photo with its hole below, the stamp set on the paper above ----------
+  const editView = $("editView"), editStage = $("editStage");
+  let anim = 0, cache = null;
+  function grain(g, x, y, w, h, amt) {
+    const d = g.getImageData(x | 0, y | 0, Math.ceil(w), Math.ceil(h)), p = d.data;
+    for (let i = 0; i < p.length; i += 4) { const n = (Math.random() - .5) * amt; p[i] += n; p[i + 1] += n; p[i + 2] += n; }
+    g.putImageData(d, x | 0, y | 0);
   }
+  function crease(g, y, w, d) {
+    g.save(); g.lineWidth = d;
+    for (const [col, off] of [["rgba(70,60,50,.13)", 0], ["rgba(255,255,255,.55)", d]]) {
+      g.strokeStyle = col; g.beginPath(); g.moveTo(0, y + off);
+      for (let x = 0; x <= w; x += w / 8) g.lineTo(x, y + off + Math.sin(x * .013 + y) * d * 1.2);
+      g.stroke(); }
+    g.restore();
+  }
+  function buildEdit() {
+    const { w, h, d } = sizeTo(editView, editStage);
+    const CW = w * .88, CH = h * .92, PH = CW * .72, paperH = CH - PH;
+    const card = mk(CW, CH), c = card.getContext("2d", { willReadFrequently: true });
+    c.fillStyle = c.createPattern(PAPERTEX, "repeat"); c.fillRect(0, 0, CW, CH);
+    crease(c, paperH * .22, CW, d); crease(c, paperH * .74, CW, d);
+    // photo window straight from the source image, framed around the cut region
+    const src = S.img, iw = src.width, ih = src.height, k0 = crop();
+    const k = Math.max(CW * .4 / k0.sw, CW / iw, PH / ih), vw = CW / k, vh = PH / k;
+    const sx0 = clamp(k0.sx + k0.sw / 2 - vw / 2, 0, iw - vw), sy0 = clamp(k0.sy + k0.sh / 2 - vh / 2, 0, ih - vh);
+    c.drawImage(src, sx0, sy0, vw, vh, 0, paperH, CW, PH);
+    grain(c, 0, paperH, CW, PH, 26);
+    const hr = { x: (k0.sx - sx0) * k, y: paperH + (k0.sy - sy0) * k, w: k0.sw * k, h: k0.sh * k };
+    const shp = shapeCanvas(hr.w, hr.h);
+    const hole = mk(CW, CH), l = hole.getContext("2d");
+    l.drawImage(shp, hr.x, hr.y); l.globalCompositeOperation = "source-in";
+    l.fillStyle = l.createPattern(PAPERTEX, "repeat"); l.fillRect(0, 0, CW, CH);
+    const out = mk(CW, CH), o = out.getContext("2d"); o.fillRect(0, 0, CW, CH);
+    o.globalCompositeOperation = "destination-out"; o.drawImage(shp, hr.x, hr.y);
+    l.globalCompositeOperation = "source-atop"; l.shadowColor = "rgba(45,35,25,.45)"; l.shadowBlur = 6 * d; l.shadowOffsetY = 2 * d;
+    l.drawImage(out, 0, 0);
+    const st = mk(1, 1); renderStamp(st, Math.max(hr.w, hr.h));
+    const se = Math.min(1, paperH * .66 / st.height, CW * .7 / st.width);
+    cache = { w, h, d, CW, CH, paperH, card, hole, st, hr, se };
+  }
+  function paintEdit(lift) {
+    if (!cache) return;
+    const { w, h, d, CW, CH, paperH, card, hole, st, hr, se } = cache, g = editView.getContext("2d");
+    const comp = mk(CW, CH), c = comp.getContext("2d");
+    c.drawImage(card, 0, 0);
+    c.globalAlpha = clamp(lift * 5, 0, 1); c.drawImage(hole, 0, 0); c.globalAlpha = 1;
+    const sx = hr.x + hr.w / 2, sy = hr.y + hr.h / 2, ex = CW / 2, ey = paperH * .56;
+    const cx = sx + (ex - sx) * lift, cy = sy + (ey - sy) * lift - Math.sin(lift * Math.PI) * paperH * .12;
+    const sc = 1 + (se - 1) * lift + Math.sin(lift * Math.PI) * .06;
+    const sw = st.width * sc, sh = st.height * sc;
+    c.save(); c.shadowColor = `rgba(30,22,14,${.22 + Math.sin(lift * Math.PI) * .25})`;
+    c.shadowBlur = (4 + Math.sin(lift * Math.PI) * 14) * d; c.shadowOffsetY = (2 + Math.sin(lift * Math.PI) * 8) * d;
+    c.drawImage(st, cx - sw / 2, cy - sh / 2, sw, sh); c.restore();
+    if (lift > .85) { c.globalAlpha = (lift - .85) / .15; c.fillStyle = "#4a443e";
+      c.font = `500 ${11 * d}px "Noto Sans KR", system-ui`; c.textBaseline = "bottom";
+      c.fillText(today(), cx - sw / 2 + 2 * d, cy - sh / 2 - 5 * d); c.globalAlpha = 1; }
+    g.clearRect(0, 0, w, h);
+    g.save(); g.translate(w / 2, h / 2 + h * .005); g.rotate(-.014);
+    g.shadowColor = "rgba(40,30,20,.28)"; g.shadowBlur = 18 * d; g.shadowOffsetY = 8 * d;
+    g.drawImage(comp, -CW / 2, -CH / 2); g.restore();
+  }
+  function drawEdit(animate) {
+    cancelAnimationFrame(anim); buildEdit();
+    if (!animate || matchMedia("(prefers-reduced-motion: reduce)").matches) { paintEdit(1); return; }
+    const t0 = performance.now(), dur = 950;
+    const tick = (now) => { const p = clamp((now - t0) / dur, 0, 1), e = p < .5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2;
+      paintEdit(e); if (p < 1) anim = requestAnimationFrame(tick); };
+    paintEdit(0); anim = requestAnimationFrame(tick);
+  }
+  let pending = 0;
+  const redrawEdit = () => { cancelAnimationFrame(pending); pending = requestAnimationFrame(() => drawEdit(false)); };
   function chips(host, entries, key, onPick, swatch) {
     host.replaceChildren();
     for (const [value, label] of entries) {
@@ -363,19 +438,20 @@ input[type=range]{width:100%;accent-color:var(--brand)}
     }
   }
   function buildControls() {
-    const redraw = () => { drawStamp(); drawViewfinder(); };
-    chips($("optShape"), Object.entries(SHAPES).map(([k, v]) => [k, v[2]]), "shape", redraw);
-    chips($("optTeeth"), Object.entries(TEETH).map(([k, v]) => [k, v[1]]), "teeth", redraw);
-    chips($("optPaper"), PAPERS, "paper", drawStamp, true);
-    chips($("optTone"), Object.entries(TONES), "tone", drawStamp);
-    chips($("optFont"), Object.entries(FONTS).map(([k, v]) => [k, v[0]]), "font", drawStamp);
-    chips($("optMark"), [[false, "없음"], [true, "찍기 (2차 후보)"]], "mark", drawStamp);
-    const cap = $("caption"); cap.value = S.caption; cap.oninput = () => { S.caption = cap.value; drawStamp(); };
+    chips($("optShape"), Object.entries(SHAPES).map(([k, v]) => [k, v[2]]), "shape", redrawEdit);
+    chips($("optMargin"), Object.entries(MARGINS).map(([k, v]) => [k, v[1]]), "margin", redrawEdit);
+    chips($("optTeeth"), Object.entries(TEETH).map(([k, v]) => [k, v[1]]), "teeth", redrawEdit);
+    chips($("optPaper"), PAPERS, "paper", redrawEdit, true);
+    chips($("optTone"), Object.entries(TONES), "tone", redrawEdit);
+    chips($("optFont"), Object.entries(FONTS).map(([k, v]) => [k, v[0]]), "font", redrawEdit);
+    chips($("optMark"), [[false, "없음"], [true, "찍기 (2차 후보)"]], "mark", redrawEdit);
+    const cap = $("caption"); cap.value = S.caption; cap.oninput = () => { S.caption = cap.value; redrawEdit(); };
+    $("meta").textContent = "점선 모양 그대로 오려낸 우표예요. 위치를 바꾸려면 「1 찍기」로 돌아가요.";
   }
 
   // ---------- step 3: page ----------
   function addToPage() {
-    const c = document.createElement("canvas"); renderStamp(c, 900);
+    const c = mk(1, 1); renderStamp(c, 900);
     c.toBlob((blob) => {
       if (!blob) return;
       const page = $("page"), img = document.createElement("img");
@@ -388,21 +464,20 @@ input[type=range]{width:100%;accent-color:var(--brand)}
   }
   function dragIn(el, box) {
     let s = null;
-    el.addEventListener("pointerdown", (e) => { el.setPointerCapture(e.pointerId);
-      s = { x: e.clientX, y: e.clientY, l: el.offsetLeft, t: el.offsetTop }; box.append(el); });
+    el.addEventListener("pointerdown", (e) => { el.setPointerCapture(e.pointerId); s = { x: e.clientX, y: e.clientY, l: el.offsetLeft, t: el.offsetTop }; box.append(el); });
     el.addEventListener("pointermove", (e) => { if (!s) return; const b = box.getBoundingClientRect();
       el.style.left = ((s.l + e.clientX - s.x) / b.width * 100) + "%"; el.style.top = ((s.t + e.clientY - s.y) / b.height * 100) + "%"; });
     const end = () => { s = null; }; el.addEventListener("pointerup", end); el.addEventListener("pointercancel", end);
   }
 
   // ---------- navigation ----------
-  function go(step) {
+  function go(step, animate) {
     for (const s of ["shoot", "edit", "page"]) { $("step-" + s).hidden = s !== step;
-      $("tab-" + s).toggleAttribute("aria-current", s === step); if (s === step) $("tab-" + s).setAttribute("aria-current", "step"); }
+      $("tab-" + s).removeAttribute("aria-current"); if (s === step) $("tab-" + s).setAttribute("aria-current", "step"); }
     if (step === "shoot") requestAnimationFrame(drawViewfinder);
-    if (step === "edit") drawStamp();
+    if (step === "edit") requestAnimationFrame(() => drawEdit(animate));
   }
-  document.querySelectorAll(".steps button").forEach((b) => b.onclick = () => go(b.dataset.step));
+  document.querySelectorAll(".steps button").forEach((b) => b.onclick = () => go(b.dataset.step, b.dataset.step === "edit"));
   $("pickAlbum").onclick = () => $("fileAlbum").click();
   $("fileAlbum").onchange = (e) => loadFile(e.target.files[0]);
   $("fileCam").onchange = (e) => loadFile(e.target.files[0]);
@@ -411,13 +486,12 @@ input[type=range]{width:100%;accent-color:var(--brand)}
   $("toPage").onclick = addToPage;
   $("again").onclick = () => go("shoot");
   $("backEdit").onclick = () => go("edit");
-  attachGestures(vf, drawViewfinder, () => 300 / vf.clientWidth);
-  attachGestures(document.querySelector(".stampbox"), drawStamp, () => 300 / stampCanvas.clientWidth);
-  addEventListener("resize", () => { if (!$("step-shoot").hidden) drawViewfinder(); });
+  attachGestures(vf, drawViewfinder);
+  addEventListener("resize", () => { if (!$("step-shoot").hidden) drawViewfinder(); else if (!$("step-edit").hidden) drawEdit(false); });
 
   S.img = samplePhoto();
   buildControls();
   go("shoot");
-  document.fonts?.load('700 20px "Gaegu"').then(() => document.fonts.load('20px "Black Han Sans"')).then(() => { if (!$("step-edit").hidden) drawStamp(); }).catch(() => {});
+  document.fonts?.load('700 20px "Gaegu"').then(() => document.fonts.load('20px "Black Han Sans"')).then(() => { if (!$("step-edit").hidden) drawEdit(false); }).catch(() => {});
 })();
 </script>
