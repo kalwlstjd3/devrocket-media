@@ -89,7 +89,7 @@ async function pickAlbum(page,d){
     if(!b)throw Error('Public sticker is not visible');
     const start={x:b.x+b.width*.1,y:b.y+b.height*.1};
     // Cat has rotation 0. Peel from its top-left edge to beyond the bottom-right.
-    const end={x:b.x+b.width*1.25,y:b.y+b.height*1.2};
+    const end={x:b.x+b.width*1.6,y:b.y+b.height*1.5};
     if(end.x>365||end.y>760)throw Error('Peel path leaves viewport; adjust fixture, never clamp the gesture');
     await pd.tick(8);await pd.touch('touchStart',start.x,start.y);await pd.tick(4);
     for(let i=1;i<=36;i++){const p=i/36,e=p*p*(3-2*p);await pd.touch('touchMove',start.x+(end.x-start.x)*e,start.y+(end.y-start.y)*e);await pd.tick();}

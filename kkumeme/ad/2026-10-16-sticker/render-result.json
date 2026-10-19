@@ -1,0 +1,151 @@
+{
+  "status": "rendered-awaiting-visual-review",
+  "metadata": {
+    "duration": 20,
+    "fps": 30,
+    "width": 1080,
+    "height": 1920,
+    "shots": [
+      {
+        "start": 0,
+        "end": 2,
+        "key": "hook",
+        "caption": "이거, 스티커 돼요"
+      },
+      {
+        "start": 2,
+        "end": 5,
+        "key": "create",
+        "folder": "create",
+        "caption": "찍기만 하면<br><span class=\"hl\">배경 제거 + 테두리까지</span>"
+      },
+      {
+        "start": 5,
+        "end": 8,
+        "key": "bag",
+        "folder": "create",
+        "caption": "내 스티커 지퍼백에<br><span class=\"hl\">차곡차곡</span>"
+      },
+      {
+        "start": 8,
+        "end": 11,
+        "key": "place",
+        "folder": "place",
+        "caption": "꺼내서<br><span class=\"hl\">마음대로 붙이고</span>"
+      },
+      {
+        "start": 11,
+        "end": 13,
+        "key": "stamp",
+        "folder": "stamp",
+        "caption": "<span class=\"hl\">우표로도</span><br>오려요"
+      },
+      {
+        "start": 13,
+        "end": 17,
+        "key": "peel",
+        "folder": "peel",
+        "caption": "방문자도<br><span class=\"hl\">떼었다 붙일 수 있어요</span>"
+      },
+      {
+        "start": 17,
+        "end": 20,
+        "key": "brand",
+        "caption": "내 마음대로 꾸미고 공유하기"
+      }
+    ],
+    "boardTimes": [
+      1.5,
+      3.7,
+      6.6,
+      10.3,
+      12.3,
+      15.2,
+      19.2
+    ]
+  },
+  "probe": {
+    "streams": [
+      {
+        "index": 0,
+        "codec_name": "h264",
+        "codec_long_name": "H.264 / AVC / MPEG-4 AVC / MPEG-4 part 10",
+        "profile": "High",
+        "codec_type": "video",
+        "codec_tag_string": "avc1",
+        "codec_tag": "0x31637661",
+        "width": 1080,
+        "height": 1920,
+        "coded_width": 1080,
+        "coded_height": 1920,
+        "closed_captions": 0,
+        "film_grain": 0,
+        "has_b_frames": 2,
+        "pix_fmt": "yuv420p",
+        "level": 50,
+        "chroma_location": "left",
+        "field_order": "progressive",
+        "refs": 1,
+        "is_avc": "true",
+        "nal_length_size": "4",
+        "id": "0x1",
+        "r_frame_rate": "30/1",
+        "avg_frame_rate": "30/1",
+        "time_base": "1/15360",
+        "start_pts": 0,
+        "start_time": "0.000000",
+        "duration_ts": 307200,
+        "duration": "20.000000",
+        "bit_rate": "932996",
+        "bits_per_raw_sample": "8",
+        "nb_frames": "600",
+        "extradata_size": 47,
+        "disposition": {
+          "default": 1,
+          "dub": 0,
+          "original": 0,
+          "comment": 0,
+          "lyrics": 0,
+          "karaoke": 0,
+          "forced": 0,
+          "hearing_impaired": 0,
+          "visual_impaired": 0,
+          "clean_effects": 0,
+          "attached_pic": 0,
+          "timed_thumbnails": 0,
+          "non_diegetic": 0,
+          "captions": 0,
+          "descriptions": 0,
+          "metadata": 0,
+          "dependent": 0,
+          "still_image": 0
+        },
+        "tags": {
+          "language": "und",
+          "handler_name": "VideoHandler",
+          "vendor_id": "[0][0][0][0]",
+          "encoder": "Lavc60.31.102 libx264"
+        }
+      }
+    ],
+    "format": {
+      "filename": "/home/claude/devrocket-media/kkumeme/ad/2026-10-16-sticker/kkume-sticker-ad-20s.mp4",
+      "nb_streams": 1,
+      "nb_programs": 0,
+      "format_name": "mov,mp4,m4a,3gp,3g2,mj2",
+      "format_long_name": "QuickTime / MOV",
+      "start_time": "0.000000",
+      "duration": "20.000000",
+      "size": "2340239",
+      "bit_rate": "936095",
+      "probe_score": 100,
+      "tags": {
+        "major_brand": "isom",
+        "minor_version": "512",
+        "compatible_brands": "isomiso2avc1mp41",
+        "encoder": "Lavf60.16.100"
+      }
+    }
+  },
+  "errors": []
+}
