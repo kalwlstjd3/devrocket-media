@@ -17,7 +17,7 @@
         "end": 5,
         "key": "create",
         "folder": "create",
-        "caption": "찍기만 하면<br><span class=\"hl\">배경 제거 + 테두리까지</span>"
+        "caption": "폰 카메라로 찍으면<br><span class=\"hl\">바로 배경 제거 + 테두리</span>"
       },
       {
         "start": 5,
@@ -96,7 +96,7 @@
         "start_time": "0.000000",
         "duration_ts": 307200,
         "duration": "20.000000",
-        "bit_rate": "1044489",
+        "bit_rate": "1188406",
         "bits_per_raw_sample": "8",
         "nb_frames": "600",
         "extradata_size": 47,
@@ -136,8 +136,8 @@
       "format_long_name": "QuickTime / MOV",
       "start_time": "0.000000",
       "duration": "20.000000",
-      "size": "2619003",
-      "bit_rate": "1047601",
+      "size": "2978709",
+      "bit_rate": "1191483",
       "probe_score": 100,
       "tags": {
         "major_brand": "isom",

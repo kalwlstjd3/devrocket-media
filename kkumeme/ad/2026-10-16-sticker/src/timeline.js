@@ -4,16 +4,16 @@
   const back=n=>1+2.70158*(n-1)**3+1.70158*(n-1)**2;
   const SHOTS=[
     {start:0,end:2,key:'hook',caption:'이거, 스티커 돼요'},
-    {start:2,end:5,key:'create',folder:'create',caption:'찍기만 하면<br><span class="hl">배경 제거 + 테두리까지</span>'},
+    {start:2,end:5,key:'create',folder:'create',caption:'폰 카메라로 찍으면<br><span class="hl">바로 배경 제거 + 테두리</span>'},
     {start:5,end:8,key:'bag',folder:'create',caption:'내 스티커 지퍼백에<br><span class="hl">차곡차곡</span>'},
     {start:8,end:11,key:'place',folder:'place',caption:'꺼내서<br><span class="hl">마음대로 붙이고</span>'},
     {start:11,end:13,key:'stamp',folder:'stamp',caption:'<span class="hl">우표로도</span><br>오려요'},
     {start:13,end:17,key:'peel',folder:'peel',caption:'방문자도<br><span class="hl">떼었다 붙일 수 있어요</span>'},
     {start:17,end:20,key:'brand',caption:'내 마음대로 꾸미고 공유하기'}
   ];
-  let counts,assets;
+  let counts,assets,markers;
   function index(t,shot){
-    if(shot.key==='create'||shot.key==='bag')return Math.min(counts.create-1,Math.floor((t-2)*30));
+    if(shot.key==='create'||shot.key==='bag')return Math.min(counts.create-1,Math.floor((t-2)*30*counts.create/180));
     if(shot.key==='place'){
       // Skip the zipbag re-open frames (cards still empty) and keep the placing moments.
       const segs=[[0,110],[168,222],[290,counts.place-1]].filter(([a,b])=>b>a),total=segs.reduce((n,[a,b])=>n+b-a,0);
@@ -41,7 +41,18 @@
       $('uiCaption').innerHTML=shot.caption;$('uiCaption').style.fontSize=shot.key==='create'||shot.key==='peel'?'38px':'42px';
       const start=shot.key==='bag'?2:shot.start;
       const entry=p(t,start,start+.18);$('phone').style.opacity=String(entry);$('phone').style.transform=`translateY(${(1-out(entry))*45}px)`;
-      await image($('recording'),`recordings/${shot.folder}/f${String(index(t,shot)).padStart(4,'0')}.png`);
+      const fi=index(t,shot);
+      await image($('recording'),`recordings/${shot.folder}/f${String(fi).padStart(4,'0')}.png`);
+      const cam=shot.folder==='create'&&markers&&fi>=markers.cameraStart&&fi<markers.cameraEnd;
+      $('cam').style.display=cam?'block':'none';
+      if(cam){
+        const q=(fi-markers.cameraStart)/(markers.cameraEnd-markers.cameraStart);
+        const press=p(q,.55,.68),flash=p(q,.7,1);
+        $('camPhoto').style.transform=`scale(${1.08-.08*p(q,0,.5)})`;
+        $('camShutter').style.transform=`translateX(-50%) scale(${1-.14*Math.sin(Math.PI*press)})`;
+        $('camFinger').style.opacity=q>=.42&&q<.78?'1':'0';
+        $('camFlash').style.opacity=String(flash>0?1-flash:0);
+      }
     }
     const logo=p(t,17,17.45),copy=p(t,17.25,17.7),address=p(t,17.7,18.1);
     $('logo').style.opacity=String(logo);$('logo').style.transform=`scale(${logo>0?back(logo):.001})`;
@@ -55,7 +66,7 @@
     const get=async src=>{const r=await fetch(src);if(!r.ok)throw Error('Missing '+src);return r.json();};
     assets=await get('assets.json');counts={};
     for(const folder of ['create','place','stamp','peel'])counts[folder]=(await get(`recordings/${folder}/capture.json`)).frames;
-    if(counts.create!==180||counts.stamp!==60||counts.peel!==120||counts.place<1)throw Error('Capture counts are incomplete');
+    markers=await get('recordings/create/markers.json');if(counts.create<180||counts.stamp!==60||counts.peel!==120||counts.place<1)throw Error('Capture counts are incomplete');
     const logo=await fetch('logo.svg');if(!logo.ok)throw Error('Missing brand logo');$('logo').innerHTML=await logo.text();
     const text=document.getElementById('stage').textContent+SHOTS.map(s=>s.caption.replace(/<[^>]*>/g,'')).join('');
     await Promise.all([document.fonts.load('400 42px "Kkume Black Han Sans"',text),document.fonts.load('700 32px "Kkume Gaegu"',text),...Array.from(document.images).filter(i=>i.getAttribute('src')).map(i=>i.decode())]);

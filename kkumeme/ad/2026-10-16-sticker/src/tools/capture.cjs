@@ -36,6 +36,17 @@ async function pickAlbum(page,d){
   await d.tap(page.getByRole('button',{name:'앨범에서 고르기',exact:true}));
   await (await choice).setFiles(path.join(root,'work/original.png'));
 }
+async function pickCamera(page,d){
+  // 「사진 찍기」 opens the phone camera (capture input). The native camera is drawn in the
+  // composite (timeline.js #cam) over the frames recorded between tap and file selection.
+  await d.tick(10);
+  const choice=page.waitForEvent('filechooser');
+  await d.tap(page.getByRole('button',{name:'사진 찍기',exact:true}));
+  const chooser=await choice;
+  const cameraStart=d.frames;await d.tick(36);const cameraEnd=d.frames;
+  await chooser.setFiles(path.join(root,'work/original.png'));
+  return{cameraStart,cameraEnd};
+}
 (async()=>{
   const server=await startServer(root);let browser;
   const contexts=[];
@@ -45,10 +56,11 @@ async function pickAlbum(page,d){
     const {page,state}=editor,d=await touchDriver(page,editor.context,root,'create');d.pause();
     await openPanel(page,d);d.resume();await d.tick(6);
     await d.tap(page.locator('.zipbag-make').filter({hasText:'스티커'}));
-    await pickAlbum(page,d);
-    while(d.frames<180)await d.tick();
+    const markers=await pickCamera(page,d);
+    while(d.frames<220)await d.tick();
     if(!state.created)throw Error('Mock upload was not called');
     d.finish();
+    fs.writeFileSync(path.join(root,'recordings/create/markers.json'),JSON.stringify(markers));
     d.pause();await advanceUntil(d,()=>page.locator('.zipbag-scene[data-busy="false"] .user-sticker-grid').isVisible(),180);
     const placement=await touchDriver(page,editor.context,root,'place');
     for(const [index,name]of ['고양이','하트','꽃'].entries()){
