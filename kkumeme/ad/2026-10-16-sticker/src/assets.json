@@ -1,0 +1,8 @@
+{
+  "placeholder": true,
+  "catOriginal": "assets/cat-original.placeholder.svg",
+  "catResult": "assets/cat-result.placeholder.svg",
+  "heart": "assets/heart.svg",
+  "flower": "assets/flower.svg",
+  "note": "CEO cat original is not attached yet. Replace catOriginal with the approved photo and catResult with an offline cutout PNG including the white outline, then set placeholder=false. No background-removal service is called."
+}
