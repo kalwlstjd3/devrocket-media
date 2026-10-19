@@ -14,10 +14,17 @@
   let counts,assets;
   function index(t,shot){
     if(shot.key==='create'||shot.key==='bag')return Math.min(counts.create-1,Math.floor((t-2)*30));
+    if(shot.key==='place'){
+      // Skip the zipbag re-open frames (cards still empty) and keep the placing moments.
+      const segs=[[0,110],[168,222],[290,counts.place-1]].filter(([a,b])=>b>a),total=segs.reduce((n,[a,b])=>n+b-a,0);
+      let k=Math.min(total-1,Math.floor((t-shot.start)/(shot.end-shot.start)*total));
+      for(const [a,b] of segs){if(k<b-a)return a+k;k-=b-a;}
+      return counts.place-1;
+    }
     const n=counts[shot.folder];return Math.min(n-1,Math.floor((t-shot.start)/(shot.end-shot.start)*n));
   }
   async function image(el,src){if(el.getAttribute('src')!==src){el.src=src;await el.decode();}}
-  window.AD={duration:20,fps:30,width:1080,height:1920,shots:SHOTS,boardTimes:[1.5,3.7,6.6,10.3,12.3,15.2,19.2]};
+  window.AD={duration:20,fps:30,width:1080,height:1920,shots:SHOTS,boardTimes:[1.5,3.7,6.6,9.6,12.3,15.2,19.2]};
   window.render=async function(t){
     if(!Number.isFinite(t)||t<0||t>20)throw Error('t must be between 0 and 20');
     t=Math.min(t,19.999);

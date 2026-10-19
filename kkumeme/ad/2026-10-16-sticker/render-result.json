@@ -58,7 +58,7 @@
       1.5,
       3.7,
       6.6,
-      10.3,
+      9.6,
       12.3,
       15.2,
       19.2
@@ -96,7 +96,7 @@
         "start_time": "0.000000",
         "duration_ts": 307200,
         "duration": "20.000000",
-        "bit_rate": "932996",
+        "bit_rate": "1023858",
         "bits_per_raw_sample": "8",
         "nb_frames": "600",
         "extradata_size": 47,
@@ -136,8 +136,8 @@
       "format_long_name": "QuickTime / MOV",
       "start_time": "0.000000",
       "duration": "20.000000",
-      "size": "2340239",
-      "bit_rate": "936095",
+      "size": "2567403",
+      "bit_rate": "1026961",
       "probe_score": 100,
       "tags": {
         "major_brand": "isom",

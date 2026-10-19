@@ -26,7 +26,7 @@ const {startServer}=require('./tools/server.cjs');
     for(const [i,t] of metadata.boardTimes.entries()){
       await page.evaluate(t=>window.render(t),t);
       const png=await page.locator('#stage').screenshot();
-      board.push({png:png.toString('base64'),label:metadata.shots[i].caption.replace(/<[^>]*>/g,''),time:t});
+      board.push({png:png.toString('base64'),label:metadata.shots[i].caption.replace(/<br>/g,' ').replace(/<[^>]*>/g,''),time:t});
     }
     const contact=await browser.newPage({viewport:{width:876,height:1670},deviceScaleFactor:1});
     await contact.setContent(`<html><head><meta charset="utf-8"><link rel="stylesheet" href="${server.origin}/fonts.css"><style>body{margin:0;padding:24px;background:#fff9ee;color:#493165;font:18px "Kkume Gaegu",sans-serif}h1{font:28px "Kkume Black Han Sans",sans-serif;margin:0 0 18px}main{display:grid;grid-template-columns:repeat(3,264px);gap:18px}figure{margin:0}img{width:264px;display:block;border-radius:12px}figcaption{height:44px;padding-top:6px;font-weight:700;font-size:16px;line-height:20px}</style></head><body><h1>꾸밈 · 스티커 20초 스토리보드</h1><main>${board.map(b=>`<figure><img src="data:image/png;base64,${b.png}"><figcaption>${b.time.toFixed(1)}s · ${b.label}</figcaption></figure>`).join('')}</main></body></html>`);

@@ -1,13 +1,6 @@
 {
-  "status": "not-rendered",
-  "createdAtKorea": "2026-10-19",
-  "target": {"width":1080,"height":1920,"fps":30,"duration":20,"frames":600,"audio":false,"codec":"H.264","pixelFormat":"yuv420p"},
-  "blocking": ["Chromium executable missing", "CEO cat original not attached"],
-  "appRef": "4a1056f",
-  "placeholder": true,
-  "mp4Produced": false,
-  "boardProduced": false,
-  "actualUiBundled": false,
-  "actualUiCaptured": false,
-  "visualReview": "not-performed"
+  "status": "rendered-awaiting-ceo-review",
+  "renderedBy": "LLM클코",
+  "date": "2026-10-19",
+  "catPlaceholder": false
 }

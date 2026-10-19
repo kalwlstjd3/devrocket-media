@@ -1,8 +1,8 @@
 {
-  "placeholder": true,
-  "catOriginal": "assets/cat-original.placeholder.svg",
-  "catResult": "assets/cat-result.placeholder.svg",
+  "placeholder": false,
+  "catOriginal": "assets/cat-original.jpg",
+  "catResult": "assets/cat-result.png",
   "heart": "assets/heart.svg",
   "flower": "assets/flower.svg",
-  "note": "CEO cat original is not attached yet. Replace catOriginal with the approved photo and catResult with an offline cutout PNG including the white outline, then set placeholder=false. No background-removal service is called."
+  "note": "CEO cat photo (ad use approved 2026-10-16, EXIF removed). catResult = offline OpenCV GrabCut cutout + white outline (LLM클코), not the server Images service."
 }
