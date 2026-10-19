@@ -1,67 +1,67 @@
 {
   "status": "rendered-awaiting-visual-review",
   "metadata": {
-    "duration": 20,
+    "duration": 23,
     "fps": 30,
     "width": 1080,
     "height": 1920,
     "shots": [
       {
         "start": 0,
-        "end": 2,
+        "end": 2.5,
         "key": "hook",
         "caption": "이거, 스티커 돼요"
       },
       {
-        "start": 2,
-        "end": 5,
+        "start": 2.5,
+        "end": 5.7,
         "key": "create",
         "folder": "create",
         "caption": "폰 카메라로 찍으면<br><span class=\"hl\">바로 배경 제거 + 테두리</span>"
       },
       {
-        "start": 5,
-        "end": 8,
+        "start": 5.7,
+        "end": 9.3,
         "key": "bag",
         "folder": "create",
         "caption": "내 스티커 지퍼백에<br><span class=\"hl\">차곡차곡</span>"
       },
       {
-        "start": 8,
-        "end": 11,
+        "start": 9.3,
+        "end": 13.8,
         "key": "place",
         "folder": "place",
         "caption": "꺼내서<br><span class=\"hl\">마음대로 붙이고</span>"
       },
       {
-        "start": 11,
-        "end": 13,
+        "start": 13.8,
+        "end": 15.8,
         "key": "stamp",
         "folder": "stamp",
         "caption": "<span class=\"hl\">우표로도</span><br>오려요"
       },
       {
-        "start": 13,
-        "end": 17,
+        "start": 15.8,
+        "end": 19.8,
         "key": "peel",
         "folder": "peel",
         "caption": "방문자도<br><span class=\"hl\">떼었다 붙일 수 있어요</span>"
       },
       {
-        "start": 17,
-        "end": 20,
+        "start": 19.8,
+        "end": 23,
         "key": "brand",
         "caption": "내 마음대로 꾸미고 공유하기"
       }
     ],
     "boardTimes": [
       1.5,
-      3.7,
-      6.6,
-      9.6,
-      12.3,
-      15.2,
-      19.2
+      4.6,
+      7.6,
+      11.6,
+      15,
+      18,
+      22.2
     ]
   },
   "probe": {
@@ -94,11 +94,11 @@
         "time_base": "1/15360",
         "start_pts": 0,
         "start_time": "0.000000",
-        "duration_ts": 307200,
-        "duration": "20.000000",
-        "bit_rate": "1188406",
+        "duration_ts": 353280,
+        "duration": "23.000000",
+        "bit_rate": "1117986",
         "bits_per_raw_sample": "8",
-        "nb_frames": "600",
+        "nb_frames": "690",
         "extradata_size": 47,
         "disposition": {
           "default": 1,
@@ -129,15 +129,15 @@
       }
     ],
     "format": {
-      "filename": "/home/claude/devrocket-media/kkumeme/ad/2026-10-16-sticker/kkume-sticker-ad-20s.mp4",
+      "filename": "/home/claude/devrocket-media/kkumeme/ad/2026-10-16-sticker/kkume-sticker-ad-23s.mp4",
       "nb_streams": 1,
       "nb_programs": 0,
       "format_name": "mov,mp4,m4a,3gp,3g2,mj2",
       "format_long_name": "QuickTime / MOV",
       "start_time": "0.000000",
-      "duration": "20.000000",
-      "size": "2978709",
-      "bit_rate": "1191483",
+      "duration": "23.000000",
+      "size": "3223052",
+      "bit_rate": "1121061",
       "probe_score": 100,
       "tags": {
         "major_brand": "isom",
