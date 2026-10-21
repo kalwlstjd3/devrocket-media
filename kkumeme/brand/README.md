@@ -46,3 +46,13 @@
 ## 확인
 
 SVG 렌더링과 파일별 id 중복 없음, favicon.svg의 미사용 정의 제거, 16px 픽셀 색·정수 경계, PNG 크기·알파 채널, ICO 16px 교체와 32/48px 프레임 바이트 유지, Apple 아이콘의 18px 배치 여백을 확인했습니다. 비교 이미지는 각 원래 크기에서 배경 합성 후 최근접 보간으로 8배 확대했습니다. 실브라우저 파비콘 캐시·iOS 홈 화면·앱 상단 적용은 별도 확인이 필요합니다. 꾸밈 앱 적용·배포는 하지 않았습니다.
+
+## 영문 로고 (2026-10-21, LLM클코)
+
+외국어 화면(`/en`·`/zh-tw`·`/ja`)용. 브랜드 로마자 표기는 「kkumeme」(CEO 2026-10-21). 도메인 표기는 그대로 `kkume.me`.
+
+| 파일 | 용도 |
+|---|---|
+| `logo-horizontal-en.svg` | 눈 스티커 아이콘 + kkumeme 워드마크, 투명 배경. 워드마크는 둥근 끝 선(stroke 50, `#493165`)으로 그린 경로, 외부 글꼴 없음. `aria-label="kkumeme"` |
+| `logo-horizontal-en.png` | 같은 로고 1776×360 투명 PNG |
+| `og-default-en.png` | 외국어 홈 공유 이미지 1200×628. 영문 로고 + 「Make it yours. Share your world.」 + kkume.me(글자는 Inter 로 래스터화) |
