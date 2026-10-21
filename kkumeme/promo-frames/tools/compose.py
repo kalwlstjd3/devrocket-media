@@ -8,18 +8,19 @@ W, H = 2160, 1350
 PURPLE = (73, 49, 101)
 
 def background():
-    bg = Image.new("RGBA", (W, H), (255, 226, 236, 255))
-    ov = Image.new("RGBA", (W, H), (0,0,0,0)); d = ImageDraw.Draw(ov); s = 54
-    for x in range(0, W, s*2): d.rectangle([x, 0, x+s-1, H], fill=(255, 170, 200, 70))
-    for y in range(0, H, s*2): d.rectangle([0, y, W, y+s-1], fill=(255, 170, 200, 70))
-    bg.alpha_composite(ov); return bg
+    rng = np.random.default_rng(3)
+    base = np.ones((H, W, 3)) * np.array([238, 233, 225])
+    n = rng.normal(0, 6, (H, W, 1)); fine = ndi.gaussian_filter(rng.normal(0, 10, (H, W)), 1.2)[..., None]
+    yy, xx = np.mgrid[0:H, 0:W]; vig = 1 - 0.07*(((xx-W/2)/(W/2))**2 + ((yy-H/2)/(H/2))**2)
+    img = (base + n + fine) * vig[..., None]
+    return Image.fromarray(img.clip(0, 255).astype(np.uint8), "RGB").convert("RGBA")
 
 def framed(fid, photo, width, focus=(0.5, 0.4)):
     fr = Image.open((FA if fid in json.load(open(FA+"frames.json")) else FU) + fid + ".png").convert("RGBA")
     m = meta[fid]; fw, fh = fr.size; h = m["hole"]
     hx, hy, hw, hh = h["x"]*fw, h["y"]*fh, h["w"]*fw, h["h"]*fh
     ex = 0.03; bx0, by0 = int(hx - hw*ex), int(hy - hh*ex); bw, bh = int(hw*(1+2*ex)), int(hh*(1+2*ex))
-    ph = Image.open(PH + photo).convert("RGBA")
+    ph = Image.open(photo if photo.startswith("/") else PH + photo).convert("RGBA")
     sc = max(bw/ph.width, bh/ph.height); ph = ph.resize((math.ceil(ph.width*sc), math.ceil(ph.height*sc)), Image.LANCZOS)
     ox = int((ph.width-bw)*focus[0]); oy = int((ph.height-bh)*focus[1]); ph = ph.crop((ox, oy, ox+bw, oy+bh))
     out = Image.new("RGBA", fr.size, (0,0,0,0)); out.paste(ph, (bx0, by0)); out.alpha_composite(fr)
@@ -65,40 +66,18 @@ def outlined_text(c, xy, txt, font, fill, stroke, sw, anchor="la"):
     d = ImageDraw.Draw(c); d.text(xy, txt, font=font, fill=fill, stroke_width=sw, stroke_fill=stroke, anchor=anchor)
 
 c = background(); d = ImageDraw.Draw(c)
-# doodles behind
-for (x, y, r, col) in [(140, 640, 30, (255,228,131,255)), (1010, 90, 22, (255,255,255,255)), (1300, 1240, 26, (255,228,131,255)), (2080, 520, 24, (255,255,255,255)), (620, 1270, 20, (255,255,255,255))]:
-    star(d, x, y, r, col)
-for (x, y, r) in [(560, 340, 26), (1460, 70, 22), (2100, 1080, 30), (980, 1180, 22)]: sparkle(d, x, y, r, (255,255,255,255))
-for (x, y, r) in [(80, 380, 22), (1990, 360, 20), (1180, 650, 18)]: heart(d, x, y, r, (255, 92, 147, 255))
-
-# headline
-outlined_text(c, (70, 60), "화면 속에", F(124), PURPLE, (255,255,255), 10)
-outlined_text(c, (70, 205), "내 사진 쏙", F(124), PURPLE, (255,255,255), 10)
-d = ImageDraw.Draw(c); d.rounded_rectangle([76, 368, 470, 424], radius=28, fill=(255,255,255)); d.text((273, 396), "꾸밈 사진 프레임", font=F(30, "Bold"), fill=PURPLE, anchor="mm")
-
-# pieces (left → seam → right)
-shadow_place(c, framed("pet-egg", "peace-closeup.png", 300, (0.5, 0.3)), 690, 70, rot=7)
-shadow_place(c, framed("window-retro", "street-flash.png", 640, (0.5, 0.3)), 50, 470, rot=-3)
-shadow_place(c, framed("window-glossy", "cafe-strawberry.png", 620, (0.5, 0.35)), 820, 300, rot=-2)
-shadow_place(c, framed("flip-phone", "mirror-selfie.png", 250, (0.5, 0.15)), 730, 700, rot=5)
-shadow_place(c, framed("crt-tv", "laughing-wide.png", 470, (0.5, 0.3)), 1500, 60, rot=-4)
-shadow_place(c, framed("handheld-game", "sunglasses-tilt.png", 560, (0.5, 0.35)), 1120, 860, rot=-5)
-shadow_place(c, framed("instant-film", "film-camera.png", 300, (0.5, 0.35)), 1440, 430, rot=6)
-# stickers
-full = Image.open(WK + "sticker-full.png"); full = full.resize((int(330*full.width/full.height), 330), Image.LANCZOS)
-shadow_place(c, full, 440, 1005, rot=-8, blur=8, off=(6, 8))
-sf = Image.open(WK + "sticker-face.png"); sf = sf.resize((430, int(430*sf.height/sf.width)), Image.LANCZOS)
+for (x, y, r) in [(1040, 140, 22), (1450, 1240, 18), (2060, 520, 20)]: sparkle(d, x, y, r, (255,255,255,255))
+shadow_place(c, framed("window-retro", "/home/claude/promo/screens/sky.png", 720), 50, 120, rot=-3)
+shadow_place(c, framed("pet-egg", "/home/claude/promo/screens/pixel-pet.png", 300, (0.5, 0.5)), 760, 60, rot=8)
+shadow_place(c, framed("flip-phone", "/home/claude/promo/screens/wallpaper.png", 250, (0.5, 0.3)), 150, 760, rot=-7)
+shadow_place(c, framed("window-glossy", "cafe-strawberry.png", 660, (0.5, 0.35)), 740, 560, rot=3)
+shadow_place(c, framed("crt-tv", "laughing-wide.png", 520, (0.5, 0.3)), 1500, 70, rot=-4)
+shadow_place(c, framed("handheld-game", "/home/claude/promo/screens/pixel-game.png", 560, (0.5, 0.5)), 1460, 1010, rot=-5)
+sf = Image.open(WK + "sticker-face.png"); sf = sf.resize((400, int(400*sf.height/sf.width)), Image.LANCZOS)
 pl = peeled(sf, (sf.width*0.74, sf.height*0.80), (1.0, 0.85))
-shadow_place(c, pl, 1690, 620, rot=7, blur=8, off=(6, 8))
-# peel hint
-d = ImageDraw.Draw(c)
-outlined_text(c, (1760, 1060), "떼었다 붙였다!", F(34, "Bold"), (255, 92, 147), (255,255,255), 5)
-# brand bottom right
-logo = Image.open("/home/claude/devrocket-media/kkumeme/brand/logo-horizontal.png").convert("RGBA"); logo = logo.resize((260, int(260*logo.height/logo.width)), Image.LANCZOS)
-bx, by = W - 70 - 560, H - 120
-d.rounded_rectangle([bx, by-14, W-60, H-34], radius=40, fill=(255,255,255,235))
-c.alpha_composite(logo, (bx+24, by + (H-34-by+14-logo.height)//2 - 7))
-d.text((bx+300, (by-14+H-34)//2), "kkume.me", font=F(40, "Black"), fill=PURPLE, anchor="lm")
+shadow_place(c, pl, 1720, 560, rot=7, blur=8, off=(6, 8))
+logo = Image.open("/home/claude/devrocket-media/kkumeme/brand/logo-horizontal.png").convert("RGBA"); logo = logo.resize((170, int(170*logo.height/logo.width)), Image.LANCZOS)
+c.alpha_composite(logo, (470, H - 70 - logo.height))
 c = c.convert("RGB"); c.save("/home/claude/promo/work/wide.png")
 c.crop((0, 0, 1080, H)).save("/home/claude/promo/work/slide-1.png"); c.crop((1080, 0, 2160, H)).save("/home/claude/promo/work/slide-2.png")
 c.resize((1080, 675)).save("/tmp/claude-0/wide.jpg", quality=88)
