@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="ko">
+<meta charset="utf-8">
+<meta name="viewport" content="width=540">
+<title>꾸밈 광고 30초 장면 소스</title>
+<link rel="stylesheet" href="fonts.css">
+<link rel="stylesheet" href="scenes.css">
+<style>
+  :root { --purple:#493165; --yellow:#FFE483; --cream:#FFF9EE; --ink:#2b2134; }
+  html,body{margin:0;background:#111}
+  #stage{position:relative;width:540px;height:960px;overflow:hidden;background:var(--cream);
+    background-image:radial-gradient(rgba(73,49,101,.10) 1.2px,transparent 1.4px);background-size:22px 22px;
+    font-family:"Kkume Black Han Sans",sans-serif;color:var(--purple)}
+  .abs{position:absolute;will-change:transform,opacity}
+  .cap{left:0;right:0;text-align:center;font-size:52px;line-height:1.12;letter-spacing:-.5px}
+  .cap span{display:inline-block}
+  .hl{background:linear-gradient(transparent 58%,var(--yellow) 58%,var(--yellow) 92%,transparent 92%);padding:0 6px}
+  .phone{width:330px;height:676px;left:105px;top:236px;border-radius:44px;background:#1d1626;padding:10px;box-sizing:border-box;
+    box-shadow:0 30px 60px rgba(40,25,60,.28),0 0 0 2px #3a2f48 inset}
+  .screen{position:relative;width:100%;height:100%;border-radius:34px;overflow:hidden;background:#fdf6e9}
+  .screen .dots{position:absolute;inset:0;background-image:radial-gradient(#e8d9c2 1.3px,transparent 1.5px);background-size:18px 18px}
+  .notch{position:absolute;left:50%;top:8px;width:84px;height:22px;margin-left:-42px;border-radius:12px;background:#1d1626;z-index:5}
+  .el{position:absolute;transform-origin:50% 50%}
+  .photo{background:#fff;padding:7px 7px 22px;box-shadow:0 6px 14px rgba(0,0,0,.18)}
+  .photo img{display:block;width:100%;height:100%;object-fit:cover}
+  .tape{position:absolute;width:56px;height:18px;background:rgba(255,228,131,.82);top:-8px;left:50%;margin-left:-28px;transform:rotate(-4deg)}
+  .memo{font-family:"Kkume Gaegu",cursive;font-weight:700;color:#3b2618;font-size:27px;line-height:1.15;white-space:nowrap}
+  .sticker{filter:drop-shadow(0 4px 6px rgba(0,0,0,.22))}
+  .chip{left:50%;top:0;transform:translateX(-50%);white-space:nowrap;background:#fff;border-radius:999px;padding:16px 26px;
+    font-family:system-ui,sans-serif;font-weight:700;font-size:24px;color:var(--purple);box-shadow:0 10px 24px rgba(73,49,101,.22),0 0 0 3px var(--purple) inset}
+  .cursor{display:inline-block;width:3px;height:26px;background:var(--purple);vertical-align:-4px;margin-left:2px}
+  .rec{width:100%;height:100%;object-fit:cover;display:block}
+  .cta{left:50%;transform:translateX(-50%);background:var(--purple);color:#fff9ee;border-radius:999px;padding:20px 40px;font-size:34px;white-space:nowrap}
+  .url{left:0;right:0;text-align:center;font-family:system-ui,sans-serif;font-weight:800;font-size:30px;color:var(--purple);letter-spacing:.5px}
+  .tap{width:54px;height:54px;border-radius:50%;background:rgba(255,228,131,.55);border:3px solid rgba(73,49,101,.55);margin:-27px 0 0 -27px}
+</style>
+<div id="stage">
+<div id="baseStage" style="position:absolute;inset:0">
+  <!-- S1 -->
+  <div id="s1icon" class="abs sticker" style="left:198px;top:170px;width:144px;height:144px"></div>
+  <div id="s1cap" class="abs cap" style="top:380px"><span id="s1a">내 마음대로</span><br><span id="s1b"><span class="hl">꾸미고 공유하기</span></span></div>
+  <div id="s1sub" class="abs cap" style="top:540px;font-family:'Kkume Gaegu',cursive;font-weight:700;font-size:34px;color:#7b5aa0">나만의 작은 웹 공간</div>
+  <!-- floating deco for S1 -->
+  <svg id="d1" class="abs sticker" width="70" height="70" viewBox="0 0 100 100" style="left:60px;top:640px"><path d="M50 88 C20 66 6 48 10 30 C14 14 34 8 50 26 C66 8 86 14 90 30 C94 48 80 66 50 88Z" fill="#ff8fab" stroke="#fff" stroke-width="9" paint-order="stroke"/></svg>
+  <svg id="d2" class="abs sticker" width="78" height="78" viewBox="0 0 100 100" style="left:410px;top:690px"><path d="M50 6 L61 37 L94 38 L68 58 L77 90 L50 71 L23 90 L32 58 L6 38 L39 37Z" fill="#ffe483" stroke="#fff" stroke-width="9" paint-order="stroke" stroke-linejoin="round"/></svg>
+  <svg id="d3" class="abs sticker" width="64" height="64" viewBox="0 0 100 100" style="left:395px;top:120px"><g fill="#a8d8ff" stroke="#fff" stroke-width="8" paint-order="stroke"><circle cx="50" cy="26" r="20"/><circle cx="74" cy="50" r="20"/><circle cx="50" cy="74" r="20"/><circle cx="26" cy="50" r="20"/></g><circle cx="50" cy="50" r="13" fill="#ffe483"/></svg>
+
+  <!-- caption for S2-S4 -->
+  <div id="cap" class="abs cap" style="top:64px"></div>
+
+  <!-- phone (S2, S4) -->
+  <div id="phone" class="abs phone"><div class="notch"></div>
+    <div class="screen" id="screen">
+      <div class="dots"></div>
+      <div id="p_title" class="el memo" style="left:26px;top:52px;font-size:34px">바다 다녀온 날</div>
+      <div id="p_photo" class="el photo" style="left:34px;top:122px;width:172px;height:132px"><div class="tape"></div><img src="photo.jpg" alt=""></div>
+      <svg id="p_heart" class="el sticker" width="64" height="64" viewBox="0 0 100 100" style="left:206px;top:104px"><path d="M50 88 C20 66 6 48 10 30 C14 14 34 8 50 26 C66 8 86 14 90 30 C94 48 80 66 50 88Z" fill="#ff8fab" stroke="#fff" stroke-width="9" paint-order="stroke"/></svg>
+      <div id="p_memo" class="el memo" style="left:150px;top:286px;font-size:25px">노을이 진짜<br>예뻤어</div>
+      <svg id="p_star" class="el sticker" width="56" height="56" viewBox="0 0 100 100" style="left:40px;top:300px"><path d="M50 6 L61 37 L94 38 L68 58 L77 90 L50 71 L23 90 L32 58 L6 38 L39 37Z" fill="#ffe483" stroke="#fff" stroke-width="9" paint-order="stroke" stroke-linejoin="round"/></svg>
+      <img id="p_stamp" class="el sticker" src="stamp.png" alt="" style="left:40px;top:388px;width:114px">
+      <div id="p_icon" class="el sticker" style="left:196px;top:420px;width:84px;height:84px"></div>
+      <div id="p_tap" class="el tap" style="left:0;top:0;opacity:0"></div>
+    </div>
+  </div>
+  <!-- phone with real recording (S3) -->
+  <div id="phone2" class="abs phone"><div class="notch"></div><div class="screen"><img id="rec" class="rec" alt=""></div></div>
+
+  <!-- S4 url chip -->
+  <div id="chipwrap" class="abs" style="left:0;right:0;top:850px;height:70px"><div class="abs chip" id="chip"><span id="chiptext"></span><span class="cursor" id="cur"></span></div></div>
+
+  <!-- S5 -->
+  <div id="s5logo" class="abs" style="left:70px;top:300px;width:400px;height:138px"></div>
+  <div id="s5url" class="abs url" style="top:470px">kkume.me</div>
+  <div id="s5cta" class="abs cta" style="top:560px">지금 꾸며 보기</div>
+  <div id="s5sub" class="abs cap" style="top:680px;font-family:'Kkume Gaegu',cursive;font-weight:700;font-size:30px;color:#7b5aa0">무료로 내 공간 만들기</div>
+</div>
+</div>
+<script>
+const $ = (id) => document.getElementById(id);
+const clamp = (v,a=0,b=1) => Math.max(a,Math.min(b,v));
+const seg = (t,a,b) => clamp((t-a)/(b-a));
+const easeOut = (p) => 1-Math.pow(1-p,3);
+const easeIn = (p) => p*p*p;
+const back = (p) => { const c1=1.70158,c3=c1+1; return 1+c3*Math.pow(p-1,3)+c1*Math.pow(p-1,2); };
+const set = (el, {x=0,y=0,s=1,r=0,o=1}={}) => { el.style.transform = `translate(${x}px,${y}px) rotate(${r}deg) scale(${s})`; el.style.opacity = o; };
+const setChip = (el, {y=0,s=1,o=1}) => { el.style.transform = `translateX(-50%) translateY(${y}px) scale(${s})`; el.style.opacity = o; };
+// "drop" a sticker: from above + scale, settles with overshoot
+const drop = (el, t, at, rot=0) => { const p = seg(t, at, at+.45); set(el, { y: (1-easeOut(p))*-60, s: p<=0?0.001:back(p), r: rot + (1-p)*-14, o: p>0?1:0 }); };
+
+let icon, logo;
+async function init() {
+  icon = await (await fetch('icon.svg')).text(); logo = await (await fetch('logo.svg')).text();
+  $('s1icon').innerHTML = icon; $('p_icon').innerHTML = icon.replace(/kkume-icon2/g,'kkume-icon3'); $('s5logo').innerHTML = logo;
+  for (const el of [$('s1icon'),$('p_icon'),$('s5logo')]) { const s = el.querySelector('svg'); s.style.width='100%'; s.style.height='100%'; }
+  await document.fonts.load('40px "Kkume Black Han Sans"', '내 마음대로 꾸미고 공유하기 사진스티커글을손으로툭툭우표로오려붙이고주소바로지금보기');
+  await document.fonts.load('700 30px "Kkume Gaegu"', '나만의 작은 웹 공간 바다 다녀온 날 노을이 진짜 예뻤어 무료로 내 공간 만들기');
+  await document.fonts.ready;
+}
+const CAPS = [
+  [2.4, 6.0, '사진·스티커·글을<br><span class="hl">손으로 툭툭</span>'],
+  [6.0, 11.0, '사진을 <span class="hl">우표로</span><br>오려 붙이고'],
+  [11.0, 13.3, '내 주소로<br><span class="hl">바로 공유</span>'],
+];
+let lastCap = '';
+const N_REC = 150;
+async function render(t) {
+  // S1 0–2.4
+  const s1out = seg(t, 2.1, 2.5);
+  set($('s1icon'), { s: t<0.05?0.001:back(seg(t,0.05,0.55)), r: (1-seg(t,0.05,.55))*-25 + Math.sin(t*3)*3, o: 1-s1out, y: -s1out*40 });
+  const a = seg(t,.35,.8), b = seg(t,.65,1.1);
+  set($('s1a'), { y:(1-easeOut(a))*40, o:a*(1-s1out) });
+  set($('s1b'), { y:(1-easeOut(b))*40, o:b*(1-s1out) });
+  set($('s1sub'), { o: seg(t,1.1,1.5)*(1-s1out) });
+  [['d1',.9,-8],['d2',1.05,10],['d3',1.2,6]].forEach(([id,at,r]) => { const p=seg(t,at,at+.4); set($(id), { s:p<=0?.001:back(p), r:r+Math.sin(t*2+at)*4, o:(p>0?1:0)*(1-s1out) }); });
+
+  // caption S2–S4
+  const cap = CAPS.find(([s,e]) => t>=s && t<e);
+  const capEl = $('cap');
+  if (cap) { if (lastCap !== cap[2]) { capEl.innerHTML = cap[2]; lastCap = cap[2]; }
+    const pin = seg(t, cap[0], cap[0]+.35), pout = seg(t, cap[1]-.25, cap[1]);
+    set(capEl, { y:(1-easeOut(pin))*30, o: pin*(1-pout) }); }
+  else set(capEl, { o:0 });
+
+  // phone S2 (2.4–6.0) and S4 (11.0–13.3)
+  const inS2 = t>=2.4 && t<6.0, inS4 = t>=11.0 && t<13.3;
+  const ph = $('phone');
+  if (inS2) { const p=seg(t,2.4,2.9), q=seg(t,5.7,6.0); set(ph,{ y:(1-easeOut(p))*700 + easeIn(q)*0, o: 1-q }); }
+  else if (inS4) { const p=seg(t,11.0,11.35), q=seg(t,13.0,13.3); set(ph,{ s:.96+.04*easeOut(p), o:p*(1-q) }); }
+  else set(ph,{o:0});
+  // elements inside
+  const base = inS4 ? 0 : 2.9;   // S4 shows the finished page immediately
+  const T = inS4 ? 99 : t;
+  drop($('p_title'), T, base+0.0, -2);
+  drop($('p_photo'), T, base+0.35, -4);
+  drop($('p_heart'), T, base+0.8, 8);
+  drop($('p_memo'), T, base+1.15, 2);
+  drop($('p_star'), T, base+1.45, -10);
+  drop($('p_icon'), T, base+1.75, 6);
+  // stamp only in S4 (made in S3)
+  const st = $('p_stamp');
+  if (inS4) { const p=seg(t,11.25,11.75); set(st,{ y:(1-easeOut(p))*-90, s:p<=0?.001:back(p)*1, r:-6+(1-p)*-20, o:p>0?1:0 }); } else set(st,{o:0});
+  // tap ripple following drops in S2
+  const tap = $('p_tap'); const drops = [[2.9,110,80],[3.25,120,190],[3.7,238,136],[4.05,200,312],[4.35,68,328],[4.65,238,462]];
+  const cur = drops.filter(([at]) => t>=at && t<at+.35).pop();
+  if (inS2 && cur) { const p=seg(t,cur[0],cur[0]+.35); tap.style.left=cur[1]+'px'; tap.style.top=cur[2]+'px'; tap.style.transform=`scale(${.6+.8*p})`; tap.style.opacity = 1-p; } else tap.style.opacity = 0;
+
+  // phone2 S3 (6.0–11.0) real recording
+  const ph2 = $('phone2');
+  if (t>=6.0 && t<11.0) { const p=seg(t,6.0,6.3), q=seg(t,10.75,11.0); set(ph2,{ x:(1-easeOut(p))*560, o:1-q*0 , s:1-q*.04}); ph2.style.opacity = 1-q;
+    const f = Math.min(N_REC-1, Math.max(0, Math.floor((t-6.0)*30)));
+    const src = `rf5/f${String(f).padStart(3,'0')}.png`;
+    const img = $('rec'); if (!img.src.endsWith(src)) { img.src = src; await img.decode(); } }
+  else set(ph2,{o:0});
+
+  // S4 url chip typing 11.6–12.6
+  const text = 'https://내아이디.kkume.me';
+  const chipP = seg(t, 11.45, 11.75), chipOut = seg(t,13.0,13.3);
+  if (t>=11.45 && t<13.3) { setChip($('chip'), { y:(1-easeOut(chipP))*40, s:1, o:chipP*(1-chipOut) });
+    const n = Math.round(seg(t,11.7,12.6)*Array.from(text).length); $('chiptext').textContent = Array.from(text).slice(0,n).join('');
+    $('cur').style.opacity = (Math.floor(t*4)%2===0 || t<12.6) ? 1 : 0; }
+  else setChip($('chip'), { o:0 });
+
+  // S5 13.3–15
+  const l = seg(t,13.35,13.85);
+  set($('s5logo'), { s: l<=0?.001:back(l), o: l>0?1:0 });
+  const u = seg(t,13.7,14.0); set($('s5url'), { y:(1-easeOut(u))*20, o:u });
+  const c = seg(t,13.9,14.25); $('s5cta').style.transform = `translateX(-50%) scale(${c<=0?.001:back(c)})`; $('s5cta').style.opacity = c>0?1:0;
+  set($('s5sub'), { o: seg(t,14.2,14.5) });
+}
+window.baseRender = render; window.initBase = init;
+</script>
+<script src="scenes.js"></script>
+</html>
+

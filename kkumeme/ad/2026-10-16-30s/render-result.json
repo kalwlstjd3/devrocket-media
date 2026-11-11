@@ -1,0 +1,151 @@
+{
+  "status": "rendered-awaiting-visual-review",
+  "metadata": {
+    "duration": 30,
+    "fps": 30,
+    "width": 1080,
+    "height": 1920,
+    "timeline": [
+      {
+        "start": 0,
+        "end": 2.4,
+        "key": "intro",
+        "label": "내 마음대로 꾸미고 공유하기"
+      },
+      {
+        "start": 2.4,
+        "end": 6,
+        "key": "arrange",
+        "label": "사진·스티커·글을 손으로 툭툭"
+      },
+      {
+        "start": 6,
+        "end": 11,
+        "key": "stamp",
+        "label": "사진을 우표로 오려 붙이고"
+      },
+      {
+        "start": 11,
+        "end": 17,
+        "key": "calendar",
+        "label": "달력에 하루하루 붙이고"
+      },
+      {
+        "start": 17,
+        "end": 23,
+        "key": "map",
+        "label": "다녀온 곳은 지도로"
+      },
+      {
+        "start": 23,
+        "end": 26.3,
+        "key": "share",
+        "label": "내 주소로 바로 공유"
+      },
+      {
+        "start": 26.3,
+        "end": 30,
+        "key": "cta",
+        "label": "지금 꾸며 보기"
+      }
+    ],
+    "boardTimes": [
+      1.6,
+      5.1,
+      8.9,
+      15.9,
+      21.9,
+      25.5,
+      29.2
+    ],
+    "sourceKind": {
+      "stamp": "reused-real-ui",
+      "calendar": "html-motion",
+      "map": "original-schematic"
+    }
+  },
+  "probe": {
+    "streams": [
+      {
+        "index": 0,
+        "codec_name": "h264",
+        "codec_long_name": "H.264 / AVC / MPEG-4 AVC / MPEG-4 part 10",
+        "profile": "High",
+        "codec_type": "video",
+        "codec_tag_string": "avc1",
+        "codec_tag": "0x31637661",
+        "width": 1080,
+        "height": 1920,
+        "coded_width": 1080,
+        "coded_height": 1920,
+        "closed_captions": 0,
+        "film_grain": 0,
+        "has_b_frames": 2,
+        "pix_fmt": "yuv420p",
+        "level": 50,
+        "chroma_location": "left",
+        "field_order": "progressive",
+        "refs": 1,
+        "is_avc": "true",
+        "nal_length_size": "4",
+        "id": "0x1",
+        "r_frame_rate": "30/1",
+        "avg_frame_rate": "30/1",
+        "time_base": "1/15360",
+        "start_pts": 0,
+        "start_time": "0.000000",
+        "duration_ts": 460800,
+        "duration": "30.000000",
+        "bit_rate": "719217",
+        "bits_per_raw_sample": "8",
+        "nb_frames": "900",
+        "extradata_size": 47,
+        "disposition": {
+          "default": 1,
+          "dub": 0,
+          "original": 0,
+          "comment": 0,
+          "lyrics": 0,
+          "karaoke": 0,
+          "forced": 0,
+          "hearing_impaired": 0,
+          "visual_impaired": 0,
+          "clean_effects": 0,
+          "attached_pic": 0,
+          "timed_thumbnails": 0,
+          "non_diegetic": 0,
+          "captions": 0,
+          "descriptions": 0,
+          "metadata": 0,
+          "dependent": 0,
+          "still_image": 0
+        },
+        "tags": {
+          "language": "und",
+          "handler_name": "VideoHandler",
+          "vendor_id": "[0][0][0][0]",
+          "encoder": "Lavc60.31.102 libx264"
+        }
+      }
+    ],
+    "format": {
+      "filename": "/home/claude/devrocket-media/kkumeme/ad/2026-10-16-30s/kkume-ad-30s.mp4",
+      "nb_streams": 1,
+      "nb_programs": 0,
+      "format_name": "mov,mp4,m4a,3gp,3g2,mj2",
+      "format_long_name": "QuickTime / MOV",
+      "start_time": "0.000000",
+      "duration": "30.000000",
+      "size": "2708331",
+      "bit_rate": "722221",
+      "probe_score": 100,
+      "tags": {
+        "major_brand": "isom",
+        "minor_version": "512",
+        "compatible_brands": "isomiso2avc1mp41",
+        "encoder": "Lavf60.16.100"
+      }
+    }
+  },
+  "errors": []
+}
